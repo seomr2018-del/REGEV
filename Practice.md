@@ -87,6 +87,11 @@ Vite · TypeScript · React 18 · Tailwind CSS · shadcn/ui · React Router · T
 ### ✅ שלב 0.2 – מסמך תהליך (`Practice.md`)
 תיעוד ההנחיות, תהליך העבודה, יומן השלבים ופקודות ההפעלה (המסמך הזה).
 
+### ✅ שלב 0.3 – עמוד בית ל־GitHub Pages (`index.md`)
+- `index.md` הוא העתק של `SPEC.MD`, עטוף ב־`<div dir="rtl">` כדי שהעמוד יוצג מימין לשמאל, עם קישור ל־Practice.
+- `_config.yml` מגדיר את כותרת האתר, שפה (`he`) ותבנית `jekyll-theme-primer`.
+- **`SPEC.MD` נשאר מקור האמת.** אחרי כל שינוי בו מעדכנים גם את `index.md` (סעיף 5.7).
+
 ### ⏳ השלבים הבאים (לפי SPEC.MD סעיף 9)
 
 | שלב | תכולה | מצב |
@@ -158,4 +163,12 @@ git add <files>                              # הוספת קבצים לקומי�
 git commit -m "Add <feature>"                # קומיט
 git push -u origin claude/awesome-bell-ahmdl4  # דחיפה לענף העבודה
 git pull origin claude/awesome-bell-ahmdl4     # משיכת עדכונים
+```
+
+### 5.7 סנכרון עמוד הבית (`index.md`) אחרי שינוי ב־SPEC.MD
+מחליפים את תוכן האפיון ב־`index.md` (כל מה שבין שורת ההפניה בראש הקובץ לבין `</div>` בסופו) בתוכן העדכני של `SPEC.MD`, ואז:
+```bash
+git add SPEC.MD index.md
+git commit -m "Update spec and sync index.md"
+git push -u origin claude/awesome-bell-ahmdl4
 ```
