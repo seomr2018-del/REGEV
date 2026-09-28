@@ -1,0 +1,314 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "name": "לוח לידים",
+  "id": "leads-dashboard",
+  "version": "1.0.0",
+  "sourceArtifact": "https://claude.ai/artifact/6T5KrGmL4962AhFHAVpfhD",
+  "implementation": "dashboard/index.html",
+  "description": "Spec מכונה-קריא התואם למימוש בפועל של דשבורד ניהול לידים. ראו SPEC.md לתיעוד המלא.",
+  "locale": {
+    "lang": "he",
+    "dir": "rtl",
+    "font": "Rubik"
+  },
+  "themes": {
+    "modes": ["light", "dark"],
+    "default": "prefers-color-scheme",
+    "persistence": {
+      "storage": "localStorage",
+      "key": "leads-theme"
+    }
+  },
+  "navigation": {
+    "type": "hash",
+    "tabs": [
+      { "id": "overview", "label": "סקירה", "hash": "#overview", "default": true },
+      { "id": "leads", "label": "לידים", "hash": "#leads" },
+      { "id": "messages", "label": "הודעות", "hash": "#messages" }
+    ]
+  },
+  "globalSearch": {
+    "field": "q",
+    "placeholder": "חיפוש שם, טלפון או הערה",
+    "matchesFields": ["n", "a1", "a2", "u", "s", "x"],
+    "phoneDigitMatch": { "field": "k", "minDigits": 3 },
+    "onFirstInput": "navigate:#leads"
+  },
+  "dataModel": {
+    "leadRecord": {
+      "fields": {
+        "p": { "type": "string", "description": "מספר טלפון מפורמט לתצוגה (LTR)" },
+        "k": { "type": "string", "description": "מספר טלפון, ספרות בלבד — מפתח לזיהוי כפילויות" },
+        "n": { "type": "string", "description": "שם הליד", "nullable": true },
+        "a1": { "type": "string", "description": "תיעוד ניסיון יצירת קשר ראשון", "nullable": true },
+        "a2": { "type": "string", "description": "תיעוד ניסיון יצירת קשר שני", "nullable": true },
+        "u": { "type": "string", "description": "עדכון אחרון", "nullable": true },
+        "s": { "type": "string", "description": "סטטוס מפורט", "enumRef": "statusValues" },
+        "x": { "type": "string", "description": "הערות / מידע תשלום", "nullable": true },
+        "dup": { "type": "boolean", "description": "מסומן כשורה כפולה (טלפון זהה לשורה אחרת)" }
+      }
+    },
+    "computedFields": {
+      "g": {
+        "description": "אובייקט השלב (stage) שאליו משתייך s",
+        "derivedFrom": "s",
+        "mapping": "stages[*].statuses"
+      },
+      "hot": {
+        "description": "true אם u מכיל 'חם' או 'לסגור' וגם g.id != 'done'",
+        "expression": "/חם|לסגור/.test(u) && g.id !== 'done'"
+      },
+      "paid": {
+        "description": "true אם x מכיל 'שולם'",
+        "expression": "/שולם/.test(x)"
+      },
+      "touch": {
+        "description": "מספר השדות הלא-ריקים מתוך [a1, a2, u]",
+        "expression": "[a1,a2,u].filter(Boolean).length",
+        "range": [0, 3]
+      }
+    }
+  },
+  "statusValues": [
+    "נסגר",
+    "נשלחה הודעת לחץ",
+    "מתלבט עדיין \\מתייעץ",
+    "מעוניין תומר לחזור אליו",
+    "קבע \\ רוצה שיחה",
+    "נשלחה הודעה לתיאום שיחה",
+    "נשלחה הקלטה \\ מלל",
+    "רוצה לחכות",
+    "לא מגיב!",
+    "לא מעוניין",
+    "לא רלוונטי",
+    "לקוח שאני לא רוצה להכניס"
+  ],
+  "stages": [
+    {
+      "id": "done",
+      "label": "נסגר",
+      "colorVar": "--done",
+      "cssClass": "g-done",
+      "statuses": ["נסגר"]
+    },
+    {
+      "id": "prog",
+      "label": "בטיפול חם",
+      "colorVar": "--prog",
+      "cssClass": "g-prog",
+      "statuses": [
+        "נשלחה הודעת לחץ",
+        "מתלבט עדיין \\מתייעץ",
+        "מעוניין תומר לחזור אליו",
+        "קבע \\ רוצה שיחה"
+      ]
+    },
+    {
+      "id": "pend",
+      "label": "ממתין לתגובה",
+      "colorVar": "--pend",
+      "cssClass": "g-pend",
+      "statuses": [
+        "נשלחה הודעה לתיאום שיחה",
+        "נשלחה הקלטה \\ מלל",
+        "רוצה לחכות"
+      ]
+    },
+    {
+      "id": "block",
+      "label": "לא מגיב",
+      "colorVar": "--block",
+      "cssClass": "g-block",
+      "statuses": ["לא מגיב!"]
+    },
+    {
+      "id": "idle",
+      "label": "ירד מהפרק",
+      "colorVar": "--idle",
+      "cssClass": "g-idle",
+      "statuses": ["לא מעוניין", "לא רלוונטי", "לקוח שאני לא רוצה להכניס"],
+      "isDefaultFallback": true
+    }
+  ],
+  "kpis": [
+    {
+      "id": "active",
+      "label": "לידים פעילים",
+      "formula": "N - count(stage=done) - count(stage=idle)",
+      "subtitleTemplate": "מתוך {N} לידים בגיליון"
+    },
+    {
+      "id": "closed",
+      "label": "נסגרו",
+      "formula": "count(stage=done)",
+      "subtitleTemplate": "{conversionPct}% המרה · {paidCount} מסומנים \"שולם\""
+    },
+    {
+      "id": "hot",
+      "label": "חמים לסגירה",
+      "formula": "count(hot=true)",
+      "subtitleTemplate": "סומנו \"חם\" או \"לסגור\" בעדכון"
+    },
+    {
+      "id": "noreply",
+      "label": "לא מגיבים",
+      "formula": "count(stage=block)",
+      "subtitleTemplate": "{noreplyPct}% מהלידים"
+    }
+  ],
+  "views": {
+    "overview": {
+      "sections": [
+        { "id": "kpis", "type": "kpi-grid", "columns": { "default": 4, "lte1000": 2, "lte460": 1 } },
+        {
+          "id": "pipeline",
+          "type": "segmented-bar",
+          "segmentBy": "stages",
+          "segmentWidthProportionalTo": "count",
+          "onSegmentClick": ["toggleStageFilter", "navigate:#leads (if selected)"],
+          "legend": { "columns": { "default": 5, "lte900": 2, "lte420": 1 } }
+        },
+        {
+          "id": "status-breakdown",
+          "type": "horizontal-bar-chart",
+          "groupBy": "s",
+          "sortBy": "count desc"
+        },
+        {
+          "id": "hot-leads",
+          "type": "list",
+          "filter": "hot == true",
+          "emptyState": "אין כרגע לידים חמים פתוחים"
+        },
+        {
+          "id": "touch-depth",
+          "type": "histogram",
+          "groupBy": "touch",
+          "buckets": [0, 1, 2, 3],
+          "bucketLabels": ["ללא תיעוד", "נגיעה אחת", "שתי נגיעות", "שלוש נגיעות"]
+        },
+        {
+          "id": "insights",
+          "type": "insight-cards",
+          "items": [
+            {
+              "id": "closed-unpaid",
+              "formula": "count(stage=done AND paid=false)",
+              "textTemplate": "{n} לידים נסגרו בלי סימון \"שולם\""
+            },
+            {
+              "id": "single-touch-waiting",
+              "formula": "count(s == 'נשלחה הודעה לתיאום שיחה' AND touch <= 1)",
+              "textTemplate": "{n} לידים קיבלו הודעה אחת בלבד"
+            },
+            {
+              "id": "duplicate-numbers",
+              "formula": "count(distinct k where dup=true)",
+              "textTemplate": "{n} מספרים מופיעים פעמיים"
+            },
+            {
+              "id": "no-name",
+              "formula": "count(n == '')",
+              "textTemplate": "{n} לידים בלי שם"
+            }
+          ]
+        }
+      ]
+    },
+    "leads": {
+      "sections": [
+        { "id": "result-count", "type": "text", "template": "מוצגים {shown} מתוך {total}" },
+        {
+          "id": "filters",
+          "type": "chip-group",
+          "options": ["all", "stage:done", "stage:prog", "stage:pend", "stage:block", "stage:idle", "hot-only"]
+        },
+        {
+          "id": "sort",
+          "type": "select",
+          "options": [
+            { "value": "stage", "label": "מיון: לפי שלב", "default": true },
+            { "value": "name", "label": "מיון: לפי שם" },
+            { "value": "touch", "label": "מיון: הכי הרבה נגיעות" },
+            { "value": "sheet", "label": "מיון: סדר הגיליון" }
+          ]
+        },
+        {
+          "id": "table",
+          "type": "data-table",
+          "columns": [
+            { "key": "n", "label": "שם", "tags": ["hot:warn", "dup:default"] },
+            { "key": "p", "label": "נייד", "copyable": true, "align": "end", "dir": "ltr" },
+            { "key": "s", "label": "סטטוס", "renderAs": "stage-pill" },
+            { "key": "a1", "label": "ניסיון ראשון" },
+            { "key": "a2", "label": "ניסיון שני" },
+            { "key": "u", "label": "עדכון אחרון" },
+            { "key": "x", "label": "הערות / תשלום", "tags": ["paid:ok"] }
+          ],
+          "responsive": { "breakpoint": "767px", "mode": "stacked-cards" },
+          "emptyState": "לא נמצאו לידים שמתאימים לסינון. נסו לנקות את החיפוש או לבחור \"הכל\"."
+        }
+      ]
+    },
+    "messages": {
+      "sections": [
+        {
+          "id": "templates",
+          "type": "card-grid",
+          "columns": { "default": 3, "lte1000": 2, "lte640": 1 },
+          "recordSchema": {
+            "type": { "type": "string" },
+            "goal": { "type": "string" },
+            "m1": { "type": "string", "label": "שלב א׳", "nullable": true, "copyable": true },
+            "m2": { "type": "string", "label": "שלב ב׳", "nullable": true, "copyable": true },
+            "m3": { "type": "string", "label": "הודעה נוספת", "nullable": true, "copyable": true }
+          },
+          "emptyMessageState": "עדיין אין נוסח לסוג הליד הזה"
+        },
+        {
+          "id": "bot-flow",
+          "type": "timeline",
+          "recordSchema": {
+            "q": { "type": "string", "description": "שאלה/שלב בתסריט הבוט" },
+            "a": { "type": "string", "nullable": true, "description": "תגובה/הענף הבא" }
+          }
+        }
+      ]
+    }
+  },
+  "interactions": {
+    "copyToClipboard": {
+      "primary": "navigator.clipboard.writeText",
+      "fallback": "document.execCommand('copy')",
+      "feedback": { "type": "toast", "text": "הועתק", "durationMs": 1600 }
+    },
+    "tooltip": {
+      "trigger": "data-tip attribute + mousemove",
+      "appliesTo": ["pipeline segments", "status bars", "touch histogram columns"]
+    },
+    "accessibility": {
+      "activeTab": "aria-current=page",
+      "activeFilterChip": "aria-pressed",
+      "iconButtons": "aria-label",
+      "visuallyHiddenClass": "sr",
+      "respectsReducedMotion": true
+    }
+  },
+  "responsive": {
+    "breakpoints": [
+      { "maxWidth": 1000, "effect": "kpi-grid:2cols, grid2:1col" },
+      { "maxWidth": 900, "effect": "legend:2cols, insights:1col" },
+      { "maxWidth": 768, "effect": "header padding reduced" },
+      { "maxWidth": 767, "effect": "leads table -> stacked cards" },
+      { "maxWidth": 640, "effect": "search field full width, templates:2cols" },
+      { "maxWidth": 460, "effect": "kpi-grid:1col" },
+      { "maxWidth": 420, "effect": "legend:1col" }
+    ]
+  },
+  "nonFunctional": {
+    "standalone": true,
+    "backend": "none — data embedded as inline JSON scripts (#data, #msgs)",
+    "persistedState": ["leads-theme"],
+    "transientState": ["stage filter", "search query", "sort order", "active tab"]
+  }
+}

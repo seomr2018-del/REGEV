@@ -1,0 +1,530 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>לוח לידים</title>
+<meta name="description" content="דשבורד מעקב לידים">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --bg:#f8fafc; --surface:#ffffff; --surface-2:#f1f5f9; --border:#e2e8f0;
+  --text:#0f172a; --text-2:#475569; --muted:#64748b;
+  --primary:#4f46e5; --primary-soft:#eef2ff; --primary-ink:#4338ca;
+  --done:#059669; --done-soft:#ecfdf5; --done-ink:#047857;
+  --prog:#d97706; --prog-soft:#fffbeb; --prog-ink:#b45309;
+  --pend:#0284c7; --pend-soft:#f0f9ff; --pend-ink:#0369a1;
+  --block:#e11d48; --block-soft:#fff1f2; --block-ink:#be123c;
+  --idle:#94a3b8; --idle-soft:#f1f5f9; --idle-ink:#475569;
+  --shadow:0 1px 2px rgba(15,23,42,.05),0 1px 3px rgba(15,23,42,.04);
+  --gap:2px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  color-scheme:dark;
+  --bg:#0f172a; --surface:#1e293b; --surface-2:#273449; --border:#334155;
+  --text:#f1f5f9; --text-2:#cbd5e1; --muted:#94a3b8;
+  --primary:#818cf8; --primary-soft:rgba(129,140,248,.14); --primary-ink:#a5b4fc;
+  --done:#34d399; --done-soft:rgba(52,211,153,.12); --done-ink:#6ee7b7;
+  --prog:#fbbf24; --prog-soft:rgba(251,191,36,.12); --prog-ink:#fcd34d;
+  --pend:#38bdf8; --pend-soft:rgba(56,189,248,.12); --pend-ink:#7dd3fc;
+  --block:#fb7185; --block-soft:rgba(251,113,133,.12); --block-ink:#fda4af;
+  --idle:#64748b; --idle-soft:rgba(100,116,139,.18); --idle-ink:#cbd5e1;
+  --shadow:0 1px 2px rgba(0,0,0,.3);
+}}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#0f172a; --surface:#1e293b; --surface-2:#273449; --border:#334155;
+  --text:#f1f5f9; --text-2:#cbd5e1; --muted:#94a3b8;
+  --primary:#818cf8; --primary-soft:rgba(129,140,248,.14); --primary-ink:#a5b4fc;
+  --done:#34d399; --done-soft:rgba(52,211,153,.12); --done-ink:#6ee7b7;
+  --prog:#fbbf24; --prog-soft:rgba(251,191,36,.12); --prog-ink:#fcd34d;
+  --pend:#38bdf8; --pend-soft:rgba(56,189,248,.12); --pend-ink:#7dd3fc;
+  --block:#fb7185; --block-soft:rgba(251,113,133,.12); --block-ink:#fda4af;
+  --idle:#64748b; --idle-soft:rgba(100,116,139,.18); --idle-ink:#cbd5e1;
+  --shadow:0 1px 2px rgba(0,0,0,.3);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Rubik","Heebo","Segoe UI",Arial,sans-serif;font-size:14px;line-height:1.5}
+.wrap{max-width:1280px;margin:0 auto;padding-inline:16px;padding-block:0 48px}
+@media (min-width:768px){.wrap{padding-inline:28px}}
+svg.i{width:18px;height:18px;flex:none;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--primary);outline-offset:2px;border-radius:8px}
+.num{font-variant-numeric:tabular-nums}
+
+/* header */
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--border)}
+.top-in{max-width:1280px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+@media (min-width:768px){.top-in{padding-inline:28px}}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:17px}
+.logo{width:34px;height:34px;border-radius:10px;background:var(--primary);color:#fff;display:grid;place-items:center}
+.logo svg{stroke:#fff}
+nav.tabs{display:flex;gap:4px;background:var(--surface-2);padding:4px;border-radius:12px}
+nav.tabs a{padding:6px 14px;border-radius:9px;color:var(--text-2);text-decoration:none;font-weight:500;white-space:nowrap}
+nav.tabs a[aria-current="page"]{background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
+.spacer{flex:1}
+.search{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:0 12px;height:38px;min-width:0;flex:1 1 200px;max-width:320px;color:var(--muted)}
+.search input{border:0;outline:0;background:transparent;color:var(--text);font:inherit;width:100%;min-width:0}
+.iconbtn{width:38px;height:38px;border-radius:12px;border:1px solid var(--border);background:var(--surface);display:grid;place-items:center;cursor:pointer;color:var(--text-2)}
+.iconbtn:hover{color:var(--text)}
+@media (max-width:640px){.search{order:5;max-width:none;flex-basis:100%}}
+
+.pagehead{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin:28px 0 20px}
+.pagehead h1{margin:0;font-size:26px;font-weight:700;text-wrap:balance}
+.pagehead p{margin:4px 0 0;color:var(--muted)}
+.stamp{color:var(--muted);font-size:13px}
+
+/* KPI */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+@media (max-width:1000px){.kpis{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:460px){.kpis{grid-template-columns:1fr}}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:18px 20px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:6px}
+.kpi-h{display:flex;align-items:center;justify-content:space-between;color:var(--text-2);font-weight:500}
+.kpi-ic{width:32px;height:32px;border-radius:10px;display:grid;place-items:center}
+.kpi-v{font-size:34px;font-weight:700;line-height:1.1;letter-spacing:-.5px}
+.kpi-s{color:var(--muted);font-size:13px}
+
+/* panels */
+.grid2{display:grid;grid-template-columns:1.35fr 1fr;gap:16px;margin-top:16px}
+@media (max-width:1000px){.grid2{grid-template-columns:1fr}}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);padding:20px;min-width:0}
+.panel h2{margin:0;font-size:16px;font-weight:600}
+.panel .sub{margin:2px 0 0;color:var(--muted);font-size:13px}
+.panel-h{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:16px}
+.full{margin-top:16px}
+
+/* pipeline */
+.pipe{display:flex;gap:var(--gap);height:44px;border-radius:12px;overflow:hidden}
+.pipe button{border:0;padding:0;cursor:pointer;min-width:6px;position:relative;transition:filter .15s,opacity .15s}
+.pipe button:hover{filter:brightness(1.08)}
+.pipe.has-sel button:not(.sel){opacity:.35}
+.legend{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:14px}
+@media (max-width:900px){.legend{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:420px){.legend{grid-template-columns:1fr}}
+.leg{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;border:1px solid var(--border);background:transparent;cursor:pointer;text-align:start}
+.leg:hover{background:var(--surface-2)}
+.leg.sel{border-color:var(--primary);background:var(--primary-soft)}
+.leg .ic{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;flex:none}
+.leg b{display:block;font-size:18px;line-height:1.1}
+.leg span{color:var(--text-2);font-size:13px}
+.leg small{color:var(--muted);font-size:12px;margin-inline-start:4px}
+
+/* status bars */
+.bars{display:flex;flex-direction:column;gap:10px}
+.bar-row{display:grid;grid-template-columns:minmax(120px,190px) 1fr 34px;align-items:center;gap:12px;cursor:default}
+.bar-row .lbl{color:var(--text-2);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.track{height:12px;position:relative}
+.fill{height:100%;border-radius:4px 0 0 4px}
+.bar-row .v{font-weight:600;text-align:end}
+.bar-row:hover .lbl{color:var(--text)}
+
+/* touches */
+.touch{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;align-items:end;height:150px;padding-top:10px;border-bottom:1px solid var(--border)}
+.tcol{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:6px}
+.tcol .tb{width:min(56px,70%);background:var(--primary);border-radius:4px 4px 0 0}
+.tcol .tv{font-weight:600;font-size:13px}
+.tlabels{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:8px;text-align:center;color:var(--muted);font-size:12px}
+
+/* hot list */
+.hot{display:flex;flex-direction:column;gap:10px}
+.hl{display:flex;gap:12px;align-items:flex-start;padding:12px;border:1px solid var(--border);border-radius:12px}
+.av{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-weight:600;flex:none;background:var(--primary-soft);color:var(--primary-ink)}
+.hl-b{min-width:0;flex:1}
+.hl-t{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.hl-t b{font-weight:600}
+.hl p{margin:4px 0 0;color:var(--text-2);font-size:13px}
+
+/* pills */
+.pill{display:inline-flex;align-items:center;gap:5px;padding:2px 9px 2px 10px;border-radius:999px;font-size:12px;font-weight:500;white-space:nowrap}
+.pill svg.i{width:13px;height:13px}
+.g-done{--c:var(--done);--s:var(--done-soft);--k:var(--done-ink)}
+.g-prog{--c:var(--prog);--s:var(--prog-soft);--k:var(--prog-ink)}
+.g-pend{--c:var(--pend);--s:var(--pend-soft);--k:var(--pend-ink)}
+.g-block{--c:var(--block);--s:var(--block-soft);--k:var(--block-ink)}
+.g-idle{--c:var(--idle);--s:var(--idle-soft);--k:var(--idle-ink)}
+.pill{background:var(--s);color:var(--k)}
+.ic.gi{background:var(--s);color:var(--k)}
+.tag{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:500;padding:1px 8px;border-radius:999px;border:1px solid var(--border);color:var(--text-2)}
+.tag.warn{border-color:transparent;background:var(--prog-soft);color:var(--prog-ink)}
+.tag.ok{border-color:transparent;background:var(--done-soft);color:var(--done-ink)}
+
+/* insights */
+.ins{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media (max-width:900px){.ins{grid-template-columns:1fr}}
+.in{display:flex;gap:12px;padding:14px;border-radius:12px;background:var(--surface-2)}
+.in b{display:block;font-weight:600;margin-bottom:2px}
+.in span{color:var(--text-2);font-size:13px}
+
+/* table */
+.filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.chip{border:1px solid var(--border);background:var(--surface);border-radius:999px;padding:6px 12px;cursor:pointer;display:inline-flex;gap:6px;align-items:center;font-size:13px;color:var(--text-2)}
+.chip .dot{width:8px;height:8px;border-radius:50%;background:var(--c,var(--primary))}
+.chip[aria-pressed="true"]{border-color:var(--primary);background:var(--primary-soft);color:var(--text)}
+.chip .n{color:var(--muted)}
+select.sort{border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:10px;padding:6px 10px;font:inherit;font-size:13px;margin-inline-start:auto}
+.tbl-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:12px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:start;font-weight:500;color:var(--muted);background:var(--surface-2);padding:10px 12px;white-space:nowrap;position:sticky;top:0}
+td{padding:10px 12px;border-top:1px solid var(--border);vertical-align:top}
+td.nm{font-weight:500;white-space:nowrap}
+td.ph{white-space:nowrap;direction:ltr;text-align:end}
+td .muted{color:var(--muted)}
+td.tx{min-width:180px;max-width:280px;color:var(--text-2)}
+tr:hover td{background:color-mix(in srgb,var(--surface-2) 55%,transparent)}
+.copy{border:0;background:transparent;color:var(--muted);cursor:pointer;padding:2px;margin-inline-start:4px;vertical-align:middle;border-radius:6px}
+.copy:hover{color:var(--primary)}
+.copy svg.i{width:14px;height:14px}
+.empty{padding:32px;text-align:center;color:var(--muted)}
+.count{color:var(--muted);font-size:13px}
+@media (max-width:767px){
+  .tbl-wrap{border:0;overflow:visible}
+  table,thead,tbody,tr,td{display:block}
+  thead{display:none}
+  tr{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px;margin-bottom:10px}
+  td{border:0;padding:3px 0;max-width:none!important;min-width:0!important}
+  td.ph{text-align:start}
+  td[data-l]:not(:empty)::before{content:attr(data-l) " · ";color:var(--muted);font-size:12px}
+  td:empty{display:none}
+  tr:hover td{background:transparent}
+}
+
+/* messages */
+.tpl{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media (max-width:1000px){.tpl{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:640px){.tpl{grid-template-columns:1fr}}
+.tc{display:flex;flex-direction:column;gap:10px}
+.tc h3{margin:0;font-size:15px;font-weight:600}
+.goal{color:var(--muted);font-size:13px}
+.bubble{background:var(--surface-2);border-radius:14px 14px 4px 14px;padding:10px 12px;font-size:13px;white-space:pre-wrap;position:relative}
+.bubble .st{display:block;color:var(--muted);font-size:11px;margin-bottom:2px}
+.bubble .copy{position:absolute;top:6px;inset-inline-end:6px}
+.nomsg{color:var(--muted);font-size:13px;border:1px dashed var(--border);border-radius:12px;padding:10px 12px}
+.flow{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:0;counter-reset:s}
+.flow li{display:grid;grid-template-columns:36px 1fr;gap:14px;position:relative;padding-bottom:18px}
+.flow li:not(:last-child)::after{content:"";position:absolute;inset-inline-start:17px;top:36px;bottom:0;width:2px;background:var(--border)}
+.flow .sn{width:36px;height:36px;border-radius:50%;background:var(--primary-soft);color:var(--primary-ink);display:grid;place-items:center;font-weight:600}
+.flow .q{font-weight:500;padding-top:6px}
+.flow .a{margin-top:6px;color:var(--text-2);font-size:13px;background:var(--surface-2);border-radius:10px;padding:8px 10px}
+
+/* tooltip */
+#tip{position:fixed;z-index:50;pointer-events:none;background:var(--text);color:var(--bg);padding:6px 10px;border-radius:8px;font-size:12px;box-shadow:0 4px 12px rgba(0,0,0,.18);opacity:0;transition:opacity .1s;max-width:240px}
+#tip.on{opacity:1}
+.toast{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:8px 14px;border-radius:10px;font-size:13px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:60}
+.toast.on{opacity:1}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+</style>
+
+<div dir="rtl" lang="he">
+<header class="top">
+  <div class="top-in">
+    <div class="brand"><span class="logo"><svg class="i" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg></span>לוח לידים</div>
+    <nav class="tabs" aria-label="ניווט">
+      <a href="#overview" data-tab="overview">סקירה</a>
+      <a href="#leads" data-tab="leads">לידים</a>
+      <a href="#messages" data-tab="messages">הודעות</a>
+    </nav>
+    <div class="spacer"></div>
+    <label class="search"><svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg><span class="sr">חיפוש</span><input id="q" type="search" placeholder="חיפוש שם, טלפון או הערה"></label>
+    <button class="iconbtn" id="theme" aria-label="החלפת מצב בהיר/כהה"><svg class="i" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg></button>
+  </div>
+</header>
+
+<main class="wrap">
+<section id="v-overview">
+  <div class="pagehead">
+    <div><h1>סקירת לידים</h1><p>מצב כל הלידים בטיפול, לפי הסטטוס האחרון שעודכן</p></div>
+    <div class="stamp num" id="stamp"></div>
+  </div>
+  <div class="kpis" id="kpis"></div>
+
+  <div class="panel full">
+    <div class="panel-h"><div><h2>משפך הלידים</h2><p class="sub">לחיצה על שלב מסננת את רשימת הלידים</p></div></div>
+    <div class="pipe" id="pipe" role="group" aria-label="פילוח לפי שלב"></div>
+    <div class="legend" id="legend"></div>
+  </div>
+
+  <div class="grid2">
+    <div class="panel">
+      <div class="panel-h"><div><h2>פילוח לפי סטטוס</h2><p class="sub">מספר לידים בכל סטטוס מפורט</p></div></div>
+      <div class="bars" id="bars"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-h"><div><h2>חמים לסגירה</h2><p class="sub">לידים שסומנו "חם" או "לסגור" ועדיין לא נסגרו</p></div></div>
+      <div class="hot" id="hot"></div>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="panel">
+      <div class="panel-h"><div><h2>עומק המעקב</h2><p class="sub">כמה נגיעות תועדו לכל ליד (ניסיון ראשון, שני, עדכון)</p></div></div>
+      <div class="touch" id="touch"></div>
+      <div class="tlabels"><span>ללא תיעוד</span><span>נגיעה אחת</span><span>שתי נגיעות</span><span>שלוש נגיעות</span></div>
+    </div>
+    <div class="panel">
+      <div class="panel-h"><div><h2>שווה לבדוק</h2><p class="sub">נקודות שעלו מהנתונים</p></div></div>
+      <div class="ins" id="ins" style="grid-template-columns:1fr"></div>
+    </div>
+  </div>
+</section>
+
+<section id="v-leads" hidden>
+  <div class="pagehead">
+    <div><h1>כל הלידים</h1><p>סינון לפי שלב, חיפוש ומיון</p></div>
+    <div class="count num" id="count"></div>
+  </div>
+  <div class="panel">
+    <div class="filters" id="filters"></div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>שם</th><th>נייד</th><th>סטטוס</th><th>ניסיון ראשון</th><th>ניסיון שני</th><th>עדכון אחרון</th><th>הערות / תשלום</th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="v-messages" hidden>
+  <div class="pagehead">
+    <div><h1>הודעות וואטסאפ</h1><p>נוסחים לפי סוג ליד, ותסריט הבוט החכם</p></div>
+  </div>
+  <div class="tpl" id="tpl"></div>
+  <div class="panel full">
+    <div class="panel-h"><div><h2>תסריט בוט חכם</h2><p class="sub">סדר השלבים כפי שמופיע בגיליון</p></div></div>
+    <ol class="flow" id="flow"></ol>
+  </div>
+</section>
+</main>
+<div id="tip" role="tooltip"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+</div>
+
+<script id="data" type="application/json">[{"p":"054-302-0851","k":"0543020851","n":"ארתור","a1":"יכול לדבר רק אחר הצהריים","a2":"לא מגיב","u":"","s":"לא מגיב!","x":"מתן רגב | 585235855","dup":false},{"p":"053-431-5117","k":"0534315117","n":"אבישי","a1":"10:05 אין מענה","a2":"לא מגיב","u":"","s":"לא מגיב!","x":"","dup":false},{"p":"050-743-7436","k":"0507437436","n":"מוטי","a1":"אמר שהתכתב בוואצפ ומעוניין עוד לחשוב","a2":"לא מגיב","u":"","s":"מתלבט עדיין \\מתייעץ","x":"הנחת סגירה מהירה | 3500 עם המעמ יצא לך 4130","dup":false},{"p":"054-225-0020","k":"0542250020","n":"","a1":"אין מענה 10:14","a2":"לא מגיב","u":"","s":"לא מגיב!","x":"תעריף עמלות","dup":false},{"p":"050-252-5355","k":"0502525355","n":"שחר","a1":"סוכם שאנסה ב12 שוב אך מעדיף אחר הצוהריים","a2":"לא מגיב","u":"","s":"לא מגיב!","x":"לקוח בטיפול מלא של מתן - 500 \\ חו''ל 600","dup":false},{"p":"052-686-3803","k":"0526863803","n":"מוחמד","a1":"11:11 אין מענה","a2":"לא מגיב","u":"","s":"לא מגיב!","x":"לקוח בטיפול חלקי של מתן - 400 ש''ח","dup":false},{"p":"052-662-3301","k":"0526623301","n":"סאלי צח","a1":"11:12 אין מענה","a2":"לא מגיב","u":"","s":"לא מגיב!","x":"לקוח לפני סגירה שצריך חיזוק קטן - 200 ש''ח","dup":false},{"p":"054-879-4057","k":"0548794057","n":"יצחק","a1":"11:13 אין מענה","a2":"לא מגיב","u":"","s":"לא מגיב!","x":"","dup":false},{"p":"054-678-7603","k":"0546787603","n":"","a1":"","a2":"לא מגיב","u":"","s":"לא מגיב!","x":"","dup":false},{"p":"054-259-6717","k":"0542596717","n":"יובל","a1":"","a2":"לא מגיב","u":"","s":"לא מגיב!","x":"","dup":false},{"p":"054-283-8103","k":"0542838103","n":"","a1":"","a2":"לא מגיב","u":"","s":"לא מגיב!","x":"","dup":false},{"p":"050-554-5552","k":"0505545552","n":"אביב","a1":"קבענו לדבר היום","a2":"דברתי איתו לא סגור על עצמו מאוד מעוניין   שלחתי הודעה לברר מה קורה","u":"עדכון: הוא רוצה לחכות עד שיסדר כמה דברים","s":"רוצה לחכות","x":"","dup":false},{"p":"054-998-6522","k":"0549986522","n":"אבי","a1":"","a2":"לא מגיב","u":"","s":"נשלחה הודעה לתיאום שיחה","x":"","dup":false},{"p":"054-622-3447","k":"0546223447","n":"נרדית + יעל","a1":"","a2":"","u":"","s":"נסגר","x":"שולם","dup":false},{"p":"050-991-5995","k":"0509915995","n":"קלים","a1":"דיברתי איתו מעוניין להמשיך אמור להתקשר אליך","a2":"נשלחו הודעות לא מגיב!","u":"עדכון: מעוניין מסדר חשבון","s":"נשלחה הודעת לחץ","x":"","dup":false},{"p":"052-672-8858","k":"0526728858","n":"אלירן","a1":"דיברתי איתו ממש רצה להמשיך - קבענו לדבר מחר","a2":"נשלחה הודעת בירור מצב","u":"עדכון: אמר שבוע הבא  מעביר כסף","s":"נסגר","x":"שולם","dup":false},{"p":"052-579-9007","k":"0525799007","n":"אברגל","a1":"דיברת אותו ושלחת אליי להמלצה","a2":"דיברתי איתו מעוניין לסגור!","u":"עדכון:  הוא נשמע דיבורים אמר רוצה וזה מבזבז זמן","s":"לקוח שאני לא רוצה להכניס","x":"","dup":false},{"p":"052-573-6363","k":"0525736363","n":"מאיר","a1":"מוכן לנסות רק החבר מתלבט","a2":"שלחתי הקלטה לחזק את ההחלטה","u":"עדכון: הוא מעונייין אבל כל פעם אומר אבל לא מתקדם","s":"נשלחה הודעת לחץ","x":"","dup":false},{"p":"054-223-6831","k":"0542236831","n":"אלעד","a1":"קבע שיחה ב1 בצהריים מחר","a2":"לא דיבר איתי בסוף- שלחתי הודעה","u":"","s":"נשלחה הודעת לחץ","x":"","dup":false},{"p":"050-574-9653","k":"0505749653","n":"","a1":"","a2":"","u":"עדכון  שלחתי לו הודעה","s":"נשלחה הודעה לתיאום שיחה","x":"","dup":false},{"p":"052-475-0186","k":"0524750186","n":"איציק","a1":"קבע שיחה ב9:20","a2":"רוצה לחו''ל - מעוניין","u":"עדכון: חם על חו''ל לסגור!!","s":"נסגר","x":"שולם","dup":false},{"p":"050-620-7643","k":"0506207643","n":"רפאל","a1":"","a2":"","u":"עדכון  שלחתי לו הודעה","s":"נשלחה הודעה לתיאום שיחה","x":"","dup":false},{"p":"054-909-8533","k":"0549098533","n":"נתאנל","a1":"דיברתי איתו -מאוד מעוניין אמר שיצור איתך קשר","a2":"שלחתי לו הודעה לשאול האם דיבר איתך?","u":"עדכון  שלחתי לו הודעה","s":"נשלחה הודעה לתיאום שיחה","x":"","dup":false},{"p":"053-340-2582","k":"0533402582","n":"K.k glus","a1":"נשלחה הודעת פתיחה","a2":"","u":"עדכון: בודק עוד דברים אבל נשמע שרוצה להתקדם","s":"נשלחה הודעת לחץ","x":"","dup":false},{"p":"052-585-8945","k":"0525858945","n":"נתאנל","a1":"דיברתי איתו -מאוד מעוניין אמר שיצור איתך קשר","a2":"שלחתי לו הודעה לשאול האם דיבר איתך?","u":"עדכון  שלחתי לו הודעה","s":"נשלחה הודעת לחץ","x":"","dup":true},{"p":"050-520-5209","k":"0505205209","n":"הראל","a1":"","a2":"","u":"עדכון  שלחתי לו הודעה","s":"נשלחה הודעה לתיאום שיחה","x":"","dup":false},{"p":"054-779-5125","k":"0547795125","n":"","a1":"","a2":"","u":"עדכון: רוצה להמשיך לשאול אותי ואותך שאלות","s":"מעוניין תומר לחזור אליו","x":"","dup":false},{"p":"054-789-8324","k":"0547898324","n":"","a1":"","a2":"","u":"עדכון  שלחתי לו הודעה","s":"נשלחה הודעה לתיאום שיחה","x":"","dup":false},{"p":"052-338-6662","k":"0523386662","n":"טל","a1":"","a2":"","u":"עדכון  שלחתי לו הודעה","s":"נשלחה הודעה לתיאום שיחה","x":"","dup":false},{"p":"054-631-5188","k":"0546315188","n":"","a1":"","a2":"","u":"","s":"נשלחה הודעה לתיאום שיחה","x":"","dup":false},{"p":"050-388-1505","k":"0503881505","n":"","a1":"","a2":"","u":"","s":"נשלחה הודעה לתיאום שיחה","x":"","dup":false},{"p":"052-401-1465","k":"0524011465","n":"מיכאל","a1":"שאל וקיבל תשובות","a2":"","u":"עדכון: לא המשיך לשאול או להגיב","s":"לא מגיב!","x":"","dup":false},{"p":"050-221-0022","k":"0502210022","n":"שי","a1":"שאל שאלות וקיבל תשובות אולי ידבר איתי אחרי זה","a2":"שלחתי לו הודעה","u":"עדכון: מתייעץ עם אישתו!  עדכון: שלחתי לו הודע","s":"מתלבט עדיין \\מתייעץ","x":"","dup":false},{"p":"052-649-6222","k":"0526496222","n":"רותם","a1":"","a2":"","u":"מאוד חם","s":"נסגר","x":"שולם","dup":false},{"p":"052-660-6973","k":"0526606973","n":"","a1":"","a2":"","u":"","s":"נשלחה הודעה לתיאום שיחה","x":"","dup":false},{"p":"054-630-3507","k":"0546303507","n":"רז","a1":"ביקש הקלטה וקיבל","a2":"","u":"","s":"לא מגיב!","x":"","dup":false},{"p":"050-701-0050","k":"0507010050","n":"","a1":"ביקש הקלטה וקיבל","a2":"","u":"","s":"לא מגיב!","x":"","dup":false},{"p":"055-662-2132","k":"0556622132","n":"","a1":"ביקש הקלטה וקיבל","a2":"תומר בקשר איתו","u":"עדכון: חם -מתייעץ עם אישתו","s":"נשלחה הודעת לחץ","x":"","dup":false},{"p":"050-771-0904","k":"0507710904","n":"","a1":"ביקש הקלטה וקיבל","a2":"לא הגיב עדיין","u":"","s":"לא מגיב!","x":"","dup":false},{"p":"43 660 9622344","k":"436609622344","n":"לקוח מחו''ל","a1":"לא הבין חשב 75,00 בחודש הראשון","a2":"התכתב עם תומר","u":"עדכון: קצת חושש מנסה לשכנע בעדינות","s":"נשלחה הקלטה \\ מלל","x":"","dup":false},{"p":"052-808-7739","k":"0528087739","n":"אבינועם","a1":"סתם מתעניין - שאל שאלות","a2":"כרגע אין לו כסף-אולי בהמשך","u":"אז לא כדאי מי שאין לו בסוף זה השקעה","s":"לא רלוונטי","x":"","dup":false},{"p":"052-782-8924","k":"0527828924","n":"","a1":"ביקש הקלטה וקיבל","a2":"","u":"","s":"לא מגיב!","x":"","dup":false},{"p":"052-881-9269","k":"0528819269","n":"~Yehuda","a1":"התכתב עם תומר - שלחתי הודעה אם יש לו שאלות ללקוח","a2":"מומלץ לחו''ל","u":"עדכון: מאוד חם -לסגור!!","s":"נשלחה הודעת לחץ","x":"","dup":false},{"p":"054-949-6166","k":"0549496166","n":"עדי-אישה","a1":"","a2":"","u":"","s":"לא מעוניין","x":"","dup":false},{"p":"053-331-2555","k":"0533312555","n":"אבי","a1":"","a2":"","u":"","s":"נשלחה הודעה לתיאום שיחה","x":"","dup":false},{"p":"053-590-0997","k":"0535900997","n":"","a1":"","a2":"שלחתי הודעה נוספת","u":"","s":"לא מגיב!","x":"","dup":false},{"p":"054-563-4850","k":"0545634850","n":"","a1":"","a2":"","u":"","s":"לא מעוניין","x":"","dup":false},{"p":"052-520-8972","k":"0525208972","n":"","a1":"","a2":"","u":"","s":"נשלחה הודעה לתיאום שיחה","x":"","dup":true},{"p":"054-243-0231","k":"0542430231","n":"","a1":"","a2":"","u":"","s":"נשלחה הודעה לתיאום שיחה","x":"","dup":true},{"p":"054-247-9708","k":"0542479708","n":"","a1":"","a2":"","u":"","s":"נשלחה הודעה לתיאום שיחה","x":"","dup":false},{"p":"052-520-8972","k":"0525208972","n":"","a1":"","a2":"","u":"","s":"נשלחה הודעה לתיאום שיחה","x":"","dup":true},{"p":"050-444-1641","k":"0504441641","n":"","a1":"","a2":"","u":"","s":"נשלחה הודעה לתיאום שיחה","x":"","dup":false},{"p":"054-728-0737","k":"0547280737","n":"","a1":"","a2":"","u":"","s":"נשלחה הודעה לתיאום שיחה","x":"","dup":true},{"p":"054-728-0737","k":"0547280737","n":"","a1":"שלחתי מלל -לא בטוח שזה אמיתי ואמין","a2":"","u":"","s":"לא רלוונטי","x":"","dup":true},{"p":"054-763-7766","k":"0547637766","n":"","a1":"","a2":"","u":"","s":"נשלחה הודעה לתיאום שיחה","x":"","dup":false},{"p":"053-629-7403","k":"0536297403","n":"","a1":"","a2":"","u":"","s":"מתלבט עדיין \\מתייעץ","x":"","dup":false},{"p":"054-202-1447","k":"0542021447","n":"","a1":"תומר דיבר איתו - לחו''ל","a2":"דיברתי איתו - מעוניין להתקדם","u":"עדכון: מאוד חם -לסגור!!","s":"נסגר","x":"","dup":false},{"p":"052-520-8972","k":"0525208972","n":"","a1":"תומר דיבר איתו שעה - ליד מעולה","a2":"שלחתי לו הודעה - לא מגיב","u":"עדכון: תומר לברר מה איתו","s":"מעוניין תומר לחזור אליו","x":"","dup":true},{"p":"052-585-8945","k":"0525858945","n":"","a1":"שלחתי הודעה","a2":"","u":"","s":"נשלחה הודעה לתיאום שיחה","x":"נשלחה הודעה לתיאום שיחה","dup":true},{"p":"054-243-0231","k":"0542430231","n":"","a1":"שלחתי הודעה - מעוניין לתאם שיחה","a2":"","u":"","s":"מתלבט עדיין \\מתייעץ","x":"נשלחה הודעה לתיאום שיחה","dup":true},{"p":"052-808-4204","k":"0528084204","n":"","a1":"שלחתי הודעה -האישה רוצה שיחה היום","a2":"","u":"","s":"נסגר","x":"נשלחה הודעה לתיאום שיחה","dup":false},{"p":"055-667-6991","k":"0556676991","n":"עמית","a1":"שלחתי הודעה -נראה מעוניין","a2":"התכתבתי איתו - נראה מעוניין","u":"","s":"נשלחה הודעת לחץ","x":"נשלחה הודעה לתיאום שיחה","dup":false},{"p":"054-974-3111","k":"0549743111","n":"","a1":"שלחתי הודעה -נראה מעוניין","a2":"קבע שיחה להיום","u":"","s":"נסגר","x":"","dup":false},{"p":"050-694-3023","k":"0506943023","n":"יאיר","a1":"שלחתי הודעה -נראה מעוניין","a2":"","u":"עדכון: מאוד חם -לסגור!!","s":"נסגר","x":"","dup":false},{"p":"054-792-0617","k":"0547920617","n":"","a1":"שלחתי הודעה","a2":"","u":"","s":"נשלחה הקלטה \\ מלל","x":"","dup":false},{"p":"052-477-4438","k":"0524774438","n":"","a1":"שלחתי הודעה","a2":"שלחתי הודעה נוספת","u":"","s":"לא מגיב!","x":"","dup":false},{"p":"052-466-5707","k":"0524665707","n":"","a1":"שלחתי הודעה","a2":"רצה לדבר  ומאז לא הגיב","u":"","s":"לא מגיב!","x":"","dup":false},{"p":"053-243-6045","k":"0532436045","n":"יורי","a1":"שלחתי הודעה -נראה מעוניין","a2":"","u":"","s":"נשלחה הודעת לחץ","x":"","dup":false},{"p":"058-506-0955","k":"0585060955","n":"","a1":"תומר שלח אליי - עניתי לו על הכל","a2":"","u":"עדכון: מאוד חם -לסגור!!","s":"מעוניין תומר לחזור אליו","x":"","dup":false},{"p":"050-303-3393","k":"0503033393","n":"","a1":"שלחתי הודעה","a2":"","u":"","s":"נשלחה הקלטה \\ מלל","x":"","dup":true},{"p":"058-592-2039","k":"0585922039","n":"אלעד","a1":"שלחתי הודעה","a2":"לא הגיב","u":"","s":"נשלחה הודעת לחץ","x":"","dup":false},{"p":"054-488-9427","k":"0544889427","n":"","a1":"שלחתי הודעה","a2":"שלחתי הודעת לחץ","u":"","s":"נשלחה הודעת לחץ","x":"","dup":false},{"p":"054-306-0931","k":"0543060931","n":"","a1":"שלחתי הודעה","a2":"","u":"","s":"לא מעוניין","x":"","dup":false},{"p":"050-303-3393","k":"0503033393","n":"","a1":"שלחתי הודעה -לא הגיב","a2":"שלחתי הודעה מה קורה?  -לא הגיב","u":"","s":"לא מגיב!","x":"","dup":true},{"p":"050-507-8471","k":"0505078471","n":"","a1":"שלחתי הודעה  -  קיבל הסברים+צילומי מסך","a2":"","u":"","s":"נשלחה הקלטה \\ מלל","x":"","dup":false},{"p":"054-210-6868","k":"0542106868","n":"","a1":"שלחתי הודעה","a2":"","u":"","s":"נשלחה הודעה לתיאום שיחה","x":"","dup":false},{"p":"050-884-9483","k":"0508849483","n":"","a1":"שלחתי הודעה","a2":"קבענו ל 8 היום","u":"","s":"קבע \\ רוצה שיחה","x":"","dup":false},{"p":"050-871-3056","k":"0508713056","n":"","a1":"שלחתי הודעה","a2":"","u":"","s":"לא מעוניין","x":"","dup":true},{"p":"050-259-0739","k":"0502590739","n":"","a1":"שלחתי הודעה","a2":"","u":"","s":"נשלחה הודעה לתיאום שיחה","x":"","dup":false},{"p":"053-640-0024","k":"0536400024","n":"","a1":"שלחתי הודעה","a2":"","u":"","s":"נשלחה הודעה לתיאום שיחה","x":"","dup":false},{"p":"054-542-1937","k":"0545421937","n":"","a1":"שלחתי הודעה","a2":"","u":"","s":"נשלחה הודעה לתיאום שיחה","x":"","dup":false},{"p":"050-343-4011","k":"0503434011","n":"","a1":"שלחתי הודעה","a2":"","u":"","s":"נשלחה הודעה לתיאום שיחה","x":"","dup":false},{"p":"055-704-1790","k":"0557041790","n":"","a1":"שלחתי הודעה","a2":"","u":"","s":"נשלחה הודעה לתיאום שיחה","x":"","dup":false},{"p":"055-227-6494","k":"0552276494","n":"","a1":"שלחתי הודעה","a2":"","u":"","s":"נשלחה הודעה לתיאום שיחה","x":"","dup":true},{"p":"055-227-6494","k":"0552276494","n":"","a1":"שלחתי הודעה","a2":"","u":"","s":"נשלחה הודעה לתיאום שיחה","x":"","dup":true},{"p":"058-407-0909","k":"0584070909","n":"","a1":"שלחתי הודעה","a2":"","u":"","s":"נשלחה הודעה לתיאום שיחה","x":"","dup":false},{"p":"054-597-8047","k":"0545978047","n":"","a1":"שלחתי הודעה","a2":"","u":"","s":"נשלחה הודעה לתיאום שיחה","x":"","dup":false},{"p":"054-928-8960","k":"0549288960","n":"","a1":"שלחתי הודעה","a2":"","u":"","s":"נשלחה הודעה לתיאום שיחה","x":"","dup":false},{"p":"050-768-8560","k":"0507688560","n":"","a1":"שלחתי הודעה","a2":"","u":"","s":"נשלחה הודעה לתיאום שיחה","x":"","dup":false},{"p":"050-786-1086","k":"0507861086","n":"","a1":"שלחתי הודעה","a2":"","u":"","s":"נשלחה הודעה לתיאום שיחה","x":"","dup":false},{"p":"052-609-6945","k":"0526096945","n":"","a1":"שלחתי הודעה","a2":"","u":"","s":"נשלחה הודעה לתיאום שיחה","x":"","dup":false},{"p":"052-854-5114","k":"0528545114","n":"","a1":"שלחתי הודעה","a2":"","u":"","s":"נשלחה הקלטה \\ מלל","x":"","dup":false},{"p":"050-871-3056","k":"0508713056","n":"","a1":"שלחתי הודעה","a2":"","u":"","s":"נשלחה הודעה לתיאום שיחה","x":"","dup":true},{"p":"052-345-3355","k":"0523453355","n":"","a1":"שלחתי הודעה","a2":"","u":"","s":"נשלחה הודעה לתיאום שיחה","x":"","dup":false},{"p":"052-529-2810","k":"0525292810","n":"","a1":"שלחתי הודעה","a2":"","u":"","s":"נשלחה הודעה לתיאום שיחה","x":"","dup":false},{"p":"050-271-7772","k":"0502717772","n":"","a1":"שלחתי הודעה","a2":"","u":"","s":"נשלחה הודעה לתיאום שיחה","x":"","dup":false},{"p":"050-815-1216","k":"0508151216","n":"","a1":"שלחתי הודעה","a2":"","u":"","s":"נשלחה הודעה לתיאום שיחה","x":"","dup":false},{"p":"053-525-1191","k":"0535251191","n":"","a1":"שלחתי הודעה","a2":"","u":"","s":"נשלחה הודעה לתיאום שיחה","x":"","dup":false},{"p":"050-771-1970","k":"0507711970","n":"","a1":"שלחתי הודעה","a2":"","u":"","s":"נשלחה הודעה לתיאום שיחה","x":"","dup":false},{"p":"050-570-1557","k":"0505701557","n":"","a1":"שלחתי הודעה","a2":"","u":"","s":"נשלחה הודעה לתיאום שיחה","x":"","dup":false}]</script>
+<script id="msgs" type="application/json">{"t":[{"type":"מתעניין כללי","goal":"לעורר עניין","m1":"ערב טוב אח יקר 😎 קוראים לי מתן ואני לקוח ותיק של תומר שמנהל חנות און ליין הוא אמר לי שאתה מעוניין לשמוע על אפשרות לפתיחת חנות ואולי תרצה לדבר עם לקוח שכבר בתהליך...אם יש לך שאלות אשמח להסביר לך על המודל והרווחים....","m2":"","m3":""},{"type":"קר","goal":"שימשיך לשמוע","m1":"צהריים טובים אח יקר 😎   קוראים לי מתן ואני לקוח ותיק של תומר שמנהל חנות און ליין הוא שלח לי את המספר שלך ואם יש לך שאלות אשמח להסביר לך על המודל והרווחים....","m2":"אתה רוצה שאקליט\\ אכתוב לך ואז נדבר או מיד לדבר בשיחה?","m3":"ערב טוב אח יקר 😎"},{"type":"קיבל פניה ולא הגיב","goal":"שיהיה סקרן להמשך","m1":"","m2":"","m3":"קוראים לי מתן ואני לקוח ותיק של תומר שמנהל חנות און ליין הוא שלח לי את המספר שלך ואם יש לך שאלות אשמח להסביר לך על המודל והרווחים...."},{"type":"קיבל 2 פניות ולא הגיב","goal":"לבדוק רלוונטיות","m1":"","m2":"","m3":""},{"type":"רוצה להתקדם - מתעכב","goal":"לטפל במניעה","m1":"סתם רציתי לשמוע איזה חנות הוא פתח לך באיזה נישה? \nכי הבנתי שהיום יש לו כל מיני נישות מגניבות רחפנים מוצרים כאלה כמו של עלי אקספרס וואלה בתקופתי לא היה את זה היה רק נעליים או אופנה סתם מעניין אותי לשמוע😝","m2":"אין","m3":""},{"type":"לקראת סגירה","goal":"לסגור פינות","m1":"","m2":"","m3":""}],"bot":[{"q":"הודעת פתיחה +בסוף אומרים למה לדבר יותר מידי? בוא ניתן ללקוחות שלנו לשתף אותך בחוויה","a":""},{"q":"יש לך שאלות נוספות? מעוניין במידע נוסף?","a":""},{"q":"כן","a":"הבנתי הכל רוצה להתקדם"},{"q":"לשיחה עם לקוח ותיק שלנו לחץ כאן","a":"בכיף שולחים לך חוזה לעיון"},{"q":"קובעים שיחה ומסבירים הכל","a":"לאחר 24 שעות שולחים הודעת בדיקה - קראת את החוזה?"},{"q":"רוצה להתקדם - מעביר חזרה לבוט","a":"כן= יש לך שאלות נוספות?    לא = אין בעיה בזמנך החופשי   (אחרי 48 שעות שולחים שוב הודעה אם לא מגיב =ליד קר!! )"},{"q":"הבוט שואל - לאחר שיחה עם לקוח ממליץ האם יש לך שאלות נוספות?","a":"כן= נא לשלוח באופן מסודר את כל השאלות על החוזה (בציון סעיף שעליו רוצים לשאול) למייל שלנו ונשמח לענות >>מייל"},{"q":"כן = ממשיכים לענות בוצאפ   לא= שולחים חוזה לעיון","a":"לא,רוצה להתקדם מעולה לתיאום חתימה מול  מנהל לחץ כאן"}]}</script>
+<script>
+(function(){
+const L = JSON.parse(document.getElementById('data').textContent);
+const M = JSON.parse(document.getElementById('msgs').textContent);
+const $ = s => document.querySelector(s);
+const esc = s => String(s||'').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+const ICON = {
+  done:'<path d="M20 6 9 17l-5-5"/>',
+  prog:'<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14 0-4 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>',
+  pend:'<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',
+  block:'<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91"/><path d="m22 2-6 6"/><path d="m16 2 6 6"/>',
+  idle:'<circle cx="12" cy="12" r="10"/><path d="M8 12h8"/>',
+  users:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+  copy:'<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>',
+  alert:'<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/>',
+  wallet:'<path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/>',
+  user:'<circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/>',
+  sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>',
+  moon:'<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>'
+};
+const ic = (k, extra='') => `<svg class="i" viewBox="0 0 24 24" aria-hidden="true" ${extra}>${ICON[k]}</svg>`;
+
+// Stages – status colors per SPEC 3.2 (emerald / amber / sky / rose / slate)
+const STAGES = [
+  {id:'done',  label:'נסגר',          cls:'g-done',  statuses:['נסגר']},
+  {id:'prog',  label:'בטיפול חם',     cls:'g-prog',  statuses:['נשלחה הודעת לחץ','מתלבט עדיין \\מתייעץ','מעוניין תומר לחזור אליו','קבע \\ רוצה שיחה']},
+  {id:'pend',  label:'ממתין לתגובה',  cls:'g-pend',  statuses:['נשלחה הודעה לתיאום שיחה','נשלחה הקלטה \\ מלל','רוצה לחכות']},
+  {id:'block', label:'לא מגיב',       cls:'g-block', statuses:['לא מגיב!']},
+  {id:'idle',  label:'ירד מהפרק',     cls:'g-idle',  statuses:['לא מעוניין','לא רלוונטי','לקוח שאני לא רוצה להכניס']}
+];
+const stageOf = s => STAGES.find(g => g.statuses.includes(s)) || STAGES[4];
+const cssVar = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const colorOf = g => `var(--${g.id})`;
+
+L.forEach((r,i) => {
+  r.i = i;
+  r.g = stageOf(r.s);
+  r.hot = /חם|לסגור/.test(r.u) && r.g.id !== 'done';
+  r.paid = /שולם/.test(r.x);
+  r.touch = [r.a1,r.a2,r.u].filter(Boolean).length;
+});
+const N = L.length;
+const cnt = id => L.filter(r => r.g.id === id).length;
+
+// state
+let sel = null, query = '', sortBy = 'stage';
+
+// stamp
+$('#stamp').textContent = `${N} לידים · נתונים מתוך הגיליון`;
+
+// KPIs
+const closed = cnt('done'), paid = L.filter(r=>r.paid).length, hot = L.filter(r=>r.hot).length, noreply = cnt('block');
+const active = N - closed - cnt('idle');
+const kpis = [
+  {t:'לידים פעילים', v:active, s:`מתוך ${N} לידים בגיליון`, k:'users', c:'--primary-soft', f:'--primary-ink'},
+  {t:'נסגרו', v:closed, s:`${Math.round(closed/N*100)}% המרה · ${paid} מסומנים "שולם"`, k:'done', c:'--done-soft', f:'--done-ink'},
+  {t:'חמים לסגירה', v:hot, s:'סומנו "חם" או "לסגור" בעדכון', k:'prog', c:'--prog-soft', f:'--prog-ink'},
+  {t:'לא מגיבים', v:noreply, s:`${Math.round(noreply/N*100)}% מהלידים`, k:'block', c:'--block-soft', f:'--block-ink'}
+];
+$('#kpis').innerHTML = kpis.map(k => `
+  <div class="kpi"><div class="kpi-h"><span>${k.t}</span><span class="kpi-ic" style="background:var(${k.c});color:var(${k.f})">${ic(k.k)}</span></div>
+  <div class="kpi-v num">${k.v}</div><div class="kpi-s">${k.s}</div></div>`).join('');
+
+// Pipeline
+function renderPipe(){
+  $('#pipe').className = 'pipe' + (sel ? ' has-sel' : '');
+  $('#pipe').innerHTML = STAGES.map(g => {
+    const n = cnt(g.id);
+    return `<button class="${sel===g.id?'sel':''}" data-stage="${g.id}" style="flex:${n};background:${colorOf(g)}" aria-label="${g.label}: ${n} לידים" data-tip="<b>${g.label}</b><br>${n} לידים · ${Math.round(n/N*100)}%"></button>`;
+  }).join('');
+  $('#legend').innerHTML = STAGES.map(g => {
+    const n = cnt(g.id);
+    return `<button class="leg ${g.cls} ${sel===g.id?'sel':''}" data-stage="${g.id}" aria-pressed="${sel===g.id}">
+      <span class="ic gi">${ic(g.id)}</span><span><b class="num">${n}</b><span>${g.label} · <span class="num">${Math.round(n/N*100)}%</span></span></span></button>`;
+  }).join('');
+}
+
+// Status bars
+function renderBars(){
+  const by = {};
+  L.forEach(r => by[r.s] = (by[r.s]||0) + 1);
+  const rows = Object.entries(by).sort((a,b) => b[1]-a[1]);
+  const max = rows[0][1];
+  $('#bars').innerHTML = rows.map(([s,n]) => {
+    const g = stageOf(s);
+    return `<div class="bar-row" data-tip="<b>${esc(s)}</b><br>${n} לידים · שלב: ${g.label}">
+      <span class="lbl" title="${esc(s)}">${esc(s)}</span>
+      <div class="track"><div class="fill" style="width:${n/max*100}%;background:${colorOf(g)}"></div></div>
+      <span class="v num">${n}</span></div>`;
+  }).join('');
+}
+
+// Hot list
+function initials(n){ return n ? n.replace(/[~'"]/g,'').trim().slice(0,1) : '?'; }
+function renderHot(){
+  const h = L.filter(r => r.hot);
+  $('#hot').innerHTML = h.length ? h.map(r => `
+    <div class="hl"><span class="av">${esc(initials(r.n))}</span>
+      <div class="hl-b"><div class="hl-t"><b>${esc(r.n || 'ללא שם')}</b><span class="num muted" dir="ltr" style="color:var(--muted)">${esc(r.p)}</span>${pill(r)}</div>
+      <p>${esc(r.u)}</p></div></div>`).join('') : '<div class="empty">אין כרגע לידים חמים פתוחים</div>';
+}
+function pill(r){ return `<span class="pill ${r.g.cls}">${ic(r.g.id)}${esc(r.s)}</span>`; }
+
+// Touches
+function renderTouch(){
+  const c = [0,0,0,0]; L.forEach(r => c[r.touch]++);
+  const max = Math.max(...c);
+  $('#touch').innerHTML = c.map((n,i) => `<div class="tcol" data-tip="${['ללא תיעוד','נגיעה אחת','שתי נגיעות','שלוש נגיעות'][i]}: ${n} לידים"><span class="tv num">${n}</span><div class="tb" style="height:${Math.max(n/max*100,2)}%"></div></div>`).join('');
+}
+
+// Insights
+function renderIns(){
+  const dupNums = new Set(L.filter(r=>r.dup).map(r=>r.k));
+  const noName = L.filter(r=>!r.n).length;
+  const closedUnpaid = L.filter(r=>r.g.id==='done' && !r.paid).length;
+  const waitOnly = L.filter(r=>r.s==='נשלחה הודעה לתיאום שיחה' && r.touch<=1).length;
+  const items = [
+    {k:'wallet', cls:'g-prog', t:`${closedUnpaid} לידים נסגרו בלי סימון "שולם"`, d:'כדאי לוודא שהתשלום התקבל ולעדכן את העמודה.'},
+    {k:'pend', cls:'g-pend', t:`${waitOnly} לידים קיבלו הודעה אחת בלבד`, d:'בסטטוס "נשלחה הודעה לתיאום שיחה" ועם נגיעה אחת לכל היותר, מתאימים להודעת המשך.'},
+    {k:'alert', cls:'g-block', t:`${dupNums.size} מספרים מופיעים פעמיים`, d:'אותו טלפון בשתי שורות, לפעמים עם סטטוס שונה. מסומנים בתגית "כפול" ברשימה.'},
+    {k:'user', cls:'g-idle', t:`${noName} לידים בלי שם`, d:'רק מספר טלפון. שם יעזור בפנייה הבאה.'}
+  ];
+  $('#ins').innerHTML = items.map(x => `<div class="in ${x.cls}"><span class="ic gi kpi-ic" style="background:var(--s);color:var(--k)">${ic(x.k)}</span><div><b>${x.t}</b><span>${x.d}</span></div></div>`).join('');
+}
+
+// Leads table
+const ORDER = {done:0,prog:1,pend:2,block:3,idle:4};
+function renderFilters(){
+  const chips = [{id:null,label:'הכל',n:N}].concat(STAGES.map(g => ({id:g.id,label:g.label,n:cnt(g.id),g})));
+  $('#filters').innerHTML = chips.map(c => `<button class="chip ${c.g?c.g.cls:''}" data-stage="${c.id||''}" aria-pressed="${sel===c.id}">${c.g?'<span class="dot"></span>':''}${c.label} <span class="n num">${c.n}</span></button>`).join('')
+    + `<button class="chip" id="hotchip" aria-pressed="${sel==='hot'}">${ic('prog','style="width:14px;height:14px"')}חמים בלבד <span class="n num">${hot}</span></button>`
+    + `<label class="sr" for="sort">מיון</label><select class="sort" id="sort"><option value="stage">מיון: לפי שלב</option><option value="name">מיון: לפי שם</option><option value="touch">מיון: הכי הרבה נגיעות</option><option value="sheet">מיון: סדר הגיליון</option></select>`;
+  $('#sort').value = sortBy;
+}
+function renderRows(){
+  const q = query.trim().toLowerCase(), qd = q.replace(/\D/g,'');
+  let rows = L.filter(r => {
+    if (sel === 'hot' ? !r.hot : (sel && r.g.id !== sel)) return false;
+    if (!q) return true;
+    const hay = [r.n,r.a1,r.a2,r.u,r.s,r.x].join(' ').toLowerCase();
+    return hay.includes(q) || (qd.length >= 3 && r.k.includes(qd));
+  });
+  rows.sort({
+    stage:(a,b)=>ORDER[a.g.id]-ORDER[b.g.id]||a.i-b.i,
+    name:(a,b)=>(a.n?0:1)-(b.n?0:1)||a.n.localeCompare(b.n,'he')||a.i-b.i,
+    touch:(a,b)=>b.touch-a.touch||a.i-b.i,
+    sheet:(a,b)=>a.i-b.i}[sortBy]);
+  $('#count').textContent = `מוצגים ${rows.length} מתוך ${N}`;
+  $('#rows').innerHTML = rows.length ? rows.map(r => `<tr>
+    <td class="nm" data-l="שם">${r.n?esc(r.n):'<span class="muted">ללא שם</span>'}${r.hot?' <span class="tag warn">חם</span>':''}${r.dup?' <span class="tag">כפול</span>':''}</td>
+    <td class="ph num" data-l="נייד"><span>${esc(r.p)}</span><button class="copy" data-copy="${esc(r.p)}" aria-label="העתקת המספר ${esc(r.p)}">${ic('copy')}</button></td>
+    <td data-l="סטטוס">${pill(r)}</td>
+    <td class="tx" data-l="ניסיון ראשון">${esc(r.a1)}</td>
+    <td class="tx" data-l="ניסיון שני">${esc(r.a2)}</td>
+    <td class="tx" data-l="עדכון אחרון">${esc(r.u)}</td>
+    <td class="tx" data-l="הערות">${r.paid?'<span class="tag ok">שולם</span> ':''}${esc(r.x.replace(/^\s*שולם\s*$/,''))}</td></tr>`).join('')
+    : `<tr><td colspan="7" class="empty">לא נמצאו לידים שמתאימים לסינון. נסו לנקות את החיפוש או לבחור "הכל".</td></tr>`;
+}
+
+// Messages
+function renderMsgs(){
+  $('#tpl').innerHTML = M.t.map(t => {
+    const msgs = [['שלב א׳',t.m1],['שלב ב׳',t.m2],['הודעה נוספת',t.m3]].filter(m => m[1]);
+    return `<div class="panel tc"><div><h3>${esc(t.type)}</h3><div class="goal">מטרה: ${esc(t.goal)}</div></div>
+      ${msgs.length ? msgs.map(m => `<div class="bubble"><span class="st">${m[0]}</span>${esc(m[1])}<button class="copy" data-copy="${esc(m[1])}" aria-label="העתקת ההודעה">${ic('copy')}</button></div>`).join('') : '<div class="nomsg">עדיין אין נוסח לסוג הליד הזה</div>'}</div>`;
+  }).join('');
+  $('#flow').innerHTML = M.bot.map((b,i) => `<li><span class="sn num">${i+1}</span><div><div class="q">${esc(b.q)}</div>${b.a?`<div class="a">${esc(b.a)}</div>`:''}</div></li>`).join('');
+}
+
+function renderAll(){ renderPipe(); renderFilters(); renderRows(); }
+
+// Tabs
+function show(tab){
+  if (!['overview','leads','messages'].includes(tab)) tab = 'overview';
+  ['overview','leads','messages'].forEach(t => $('#v-'+t).hidden = t !== tab);
+  document.querySelectorAll('nav.tabs a').forEach(a => a.setAttribute('aria-current', a.dataset.tab===tab ? 'page' : 'false'));
+}
+window.addEventListener('hashchange', () => show(location.hash.slice(1)));
+show(location.hash.slice(1));
+
+// Events
+document.addEventListener('click', e => {
+  const cp = e.target.closest('[data-copy]');
+  if (cp){ copy(cp.dataset.copy); return; }
+  if (e.target.closest('#hotchip')){ sel = sel==='hot' ? null : 'hot'; renderAll(); return; }
+  const st = e.target.closest('[data-stage]');
+  if (st){
+    const id = st.dataset.stage || null;
+    const inOverview = !!st.closest('#v-overview');
+    sel = (inOverview && sel === id) ? null : id;
+    renderAll();
+    if (inOverview && sel){ location.hash = 'leads'; }
+  }
+});
+document.addEventListener('change', e => { if (e.target.id === 'sort'){ sortBy = e.target.value; renderRows(); } });
+$('#q').addEventListener('input', e => { query = e.target.value; renderRows(); if (query && $('#v-leads').hidden) location.hash = 'leads'; });
+
+function toast(t){ const el = $('#toast'); el.textContent = t; el.classList.add('on'); clearTimeout(toast.h); toast.h = setTimeout(() => el.classList.remove('on'), 1600); }
+function copy(t){
+  const fallback = () => { const ta = document.createElement('textarea'); ta.value = t; document.body.appendChild(ta); ta.select(); try{ document.execCommand('copy'); toast('הועתק'); }catch(_){ toast('סמנו את הטקסט והעתיקו ידנית'); } ta.remove(); };
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(() => toast('הועתק'), fallback); else fallback();
+}
+
+// Tooltip
+const tip = $('#tip');
+document.addEventListener('mousemove', e => {
+  const t = e.target.closest('[data-tip]');
+  if (!t){ tip.classList.remove('on'); return; }
+  tip.innerHTML = t.dataset.tip; tip.classList.add('on');
+  const w = tip.offsetWidth, h = tip.offsetHeight;
+  let x = e.clientX - w/2, y = e.clientY - h - 12;
+  x = Math.max(8, Math.min(x, innerWidth - w - 8)); if (y < 8) y = e.clientY + 16;
+  tip.style.left = x+'px'; tip.style.top = y+'px';
+});
+
+// Theme toggle
+const root = document.documentElement;
+function curDark(){ const t = root.getAttribute('data-theme'); return t ? t==='dark' : matchMedia('(prefers-color-scheme: dark)').matches; }
+function setIcon(){ $('#theme').innerHTML = ic(curDark() ? 'sun' : 'moon'); }
+try{ const s = localStorage.getItem('leads-theme'); if (s) root.setAttribute('data-theme', s); }catch(_){}
+setIcon();
+$('#theme').addEventListener('click', () => { const n = curDark() ? 'light' : 'dark'; root.setAttribute('data-theme', n); try{ localStorage.setItem('leads-theme', n); }catch(_){} setIcon(); });
+
+renderPipe(); renderBars(); renderHot(); renderTouch(); renderIns(); renderFilters(); renderRows(); renderMsgs();
+})();
+</script>
+
+</body></html>
